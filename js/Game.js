@@ -29,75 +29,57 @@ class Game {
       form.display();
     }
 
-    runner1 = createSprite(100,200);
-    runner1.addImage("runnerImg1",runner1Img);
-    runner2 = createSprite(300,200);
-    runner2.addImage("runnerImg2",runner2Img);
-    runner3 = createSprite(500,200);
-    runner3.addImage("runnerImg3",runner3Img);
-    runner4 = createSprite(700,200);
-    runner4.addImage("runnerImg4",runner4Img);
-    runners = [runner1, runner2, runner3, runner4];
+       runner1 = createSprite(100,150,40,70);
+        runner2 = createSprite(100,300,40,70);
+        runner3 = createSprite(100,450,40,70);
+        runner4 = createSprite(100,600,40,70);
+        runners = [runner1,runner2,runner3,runner4];
+
+        line1 = createSprite(1000,310,10010,2);
+        line1.shapeColor = "white";
+        line2 = createSprite(1000,460,10010,2);
+        line2.shapeColor = "white";
+        line3 = createSprite(1000,610,10010,2);
+        line3.shapeColor = "white";
+        line4 = createSprite(1000,760,10010,2);
+        line4.shapeColor = "white";
+
+        runner1.collide(line1);
   }
 
   play(){
+  
     form.hide();
 
     Player.getPlayerInfo();
     
     if(allPlayers !== undefined){
       //var display_position = 100;
-      background(groundimg);
-      image(trackimg,0,-displayHeight*4,displayWidth,displayHeight*5);
-      
-      var hurdleGroup = createGroup(); 
-
-      if(frameCount % 14 === 0){
-        var hurdle = createSprite(displayWidth ,random(100,-2500),20,20);
-        hurdle.addImage("hurdleimage",hurdleImg);
-        hurdle.scale = 1.2;
-        hurdle.velocityX  = -6;
-        hurdleGroup.add(hurdle);
-       
-      }
-      if (player.x -hurdleGroup.x < hurdleGroup.width/2 + player.width/2
-        && hurdleGroup.x - player.x < hurdleGroup.width/2 +player.width/2) {
-          player.distance+= -20;
-          
-         }
-         if (player.y - hurdleGroup.y < hurdleGroup.height/2 + player.height/2
-           && hurdleGroup.y -player.y < hurdleGroup.height/2 + player.height/2){
-            player.distance+= -20;
-         }
-
-
-     
+      background(186,250,155);
      
       //index of the array
       var index = 0;
 
       //x and y position of the cars
-      var x = 175;
-      var y;
+      var x;
+      var y = 125;
 
       for(var plr in allPlayers){
         //add 1 to the index for every loop
         index = index + 1 ;
 
-        //position the cars a little away from each other in x direction
-        x = x + 200;
+        //position the runners a little away from each other in y direction
+        y+=150
         //use data form the database to display the cars in y direction
-        y = displayHeight - allPlayers[plr].distance;
+        x = displayWidth - allPlayers[plr].distance;
         runners[index-1].x = x;
         runners[index-1].y = y;
 
         if (index === player.index){
-          stroke(10);
-          fill("red");
-         ellipse(x,y,120,120);
-          runners[index - 1].shapeColor = "red";
-          camera.position.x = displayWidth/2;
-          camera.position.y = runners[index-1].y
+          
+          runners[index-1].shapeColor = "blue";
+          camera.position.x = runners[index-1].x;
+          camera.position.y = displayHeight/2+100;
         }
        
         //textSize(15);
@@ -106,15 +88,22 @@ class Game {
 
     }
     
-    if(keyIsDown(UP_ARROW) && player.index !== null){
+    if(keyIsDown(RIGHT_ARROW) && player.index !== null){
       player.distance +=10
       player.update();
     }
-    if(player.distance>3860){
+     if(keyIsDown("space") && player.index !== null){
+            player.velocityY = -1;
+            player.update();
+        };
+    if(player.distance===600){
        gameState=2;
        player.rank = player.rank + 1;
        Player.updateCarsAtEnd(player.rank);
-
+       var element = createElement("h1","reached");
+       element.position(650,300);
+       player.distance+=0;
+       end();
     }
      
     drawSprites();
